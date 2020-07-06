@@ -188,24 +188,23 @@ const formatDate = ({
   fromNow,
   difference,
   formatString,
+  local = false,
   locale = `en`,
 }) => {
   const normalizedDate = JSON.parse(JSON.stringify(date))
+  const momentDate = moment
+    .utc(normalizedDate, ISO_8601_FORMAT, true)
+    .local(local)
+    .locale(locale)
+
   if (formatString) {
-    return moment
-      .utc(normalizedDate, ISO_8601_FORMAT, true)
-      .locale(locale)
-      .format(formatString)
-  } else if (fromNow) {
-    return moment
-      .utc(normalizedDate, ISO_8601_FORMAT, true)
-      .locale(locale)
-      .fromNow()
-  } else if (difference) {
-    return moment().diff(
-      moment.utc(normalizedDate, ISO_8601_FORMAT, true).locale(locale),
-      difference
-    )
+    return momentDate.format(formatString)
+  }
+  if (fromNow) {
+    return momentDate.fromNow()
+  }
+  if (difference) {
+    return moment().diff(momentDate, difference)
   }
   return normalizedDate
 }
